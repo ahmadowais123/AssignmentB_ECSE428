@@ -7,6 +7,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class Steps {
 
@@ -18,13 +20,18 @@ public class Steps {
 
         setupSeleniumDriver();
 
-        webDriver.get("http://www.google.com/xhtml");
+        webDriver.get("https://accounts.google.com/signin");
         Thread.sleep(5000);  // Let the user actually see something!
-        WebElement searchBox = webDriver.findElement(By.name("q"));
-        searchBox.sendKeys("ChromeDriver");
-        searchBox.submit();
-        Thread.sleep(5000);  // Let the user actually see something!
-        webDriver.quit();
+//        WebDriverWait wait = new WebDriverWait(webDriver, 10);
+//        wait.until(ExpectedConditions.presenceOfElementLocated(By.className("Xb9hP")));
+        WebElement email = webDriver.findElement(By.id("identifierId"));
+        email.click();
+        email.sendKeys("ahmadowais123");
+        //WebElement searchBox = webDriver.findElement(By.name("q"));
+        //searchBox.sendKeys("ChromeDriver");
+        //searchBox.submit();
+        //Thread.sleep(5000);  // Let the user actually see something!
+        //webDriver.quit();
     }
 
     private void setupSeleniumDriver() {

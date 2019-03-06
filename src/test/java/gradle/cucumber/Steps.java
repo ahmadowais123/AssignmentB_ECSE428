@@ -58,7 +58,6 @@ public class Steps {
     public void attachImage() throws Exception {
         WebElement attachFileElement = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//div[@command='Files' and @aria-label='Attach files']")));
         attachFileElement.click();
-        Runtime.getRuntime().exec("Autoit/attach.exe");
         Thread.sleep(5000);
     }
 

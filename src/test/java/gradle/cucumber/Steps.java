@@ -59,7 +59,7 @@ public class Steps {
         WebElement attachFileElement = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//div[@command='Files' and @aria-label='Attach files']")));
         attachFileElement.click();
 
-        String cmd = "Images/TestFullPath.exe Images/" + imageName;
+        String cmd = "Images/AttachFile.exe Images/" + imageName;
 
         Runtime.getRuntime().exec(cmd);
         Thread.sleep(5000);

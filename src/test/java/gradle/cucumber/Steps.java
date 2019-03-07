@@ -1,6 +1,5 @@
 package gradle.cucumber;
 
-import com.gargoylesoftware.htmlunit.WebWindow;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
@@ -59,14 +58,14 @@ public class Steps {
     public void attachImage() throws Exception {
         WebElement attachFileElement = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//div[@command='Files' and @aria-label='Attach files']")));
         attachFileElement.click();
-        Runtime.getRuntime().exec("Autoit/attach.exe");
+        Runtime.getRuntime().exec("Images/TestFullPath.exe Images/screencap.JPG");
         Thread.sleep(5000);
     }
 
-    @And("^I click the submit button$")
+    @And("^I click the send button$")
     public void sendEmail() {
-        WebElement sendButton = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//div[@role='button' and @aria-label='Send \u202A(Ctrl-Enter)\u202C']")));
-        sendButton.click();
+        //WebElement sendButton = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//div[@role='button' and @aria-label='Send \u202A(Ctrl-Enter)\u202C']")));
+        //sendButton.click();
     }
 
     private void setupSeleniumDriver() {

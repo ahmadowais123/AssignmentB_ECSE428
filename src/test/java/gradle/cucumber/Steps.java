@@ -42,7 +42,7 @@ public class Steps {
         composeButton.click();
     }
 
-    @And("I send the email to {string} with subject {string}")
+    @And("I send the email to (.*) with subject (.*)")
     public void setEmailAddressAndSubject(String emailAddress, String subject) {
         WebElement recipientAddressElement = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//textarea[@name='to' and @aria-label='To']")));
         recipientAddressElement.sendKeys(emailAddress);
@@ -54,17 +54,28 @@ public class Steps {
         bodyElement.sendKeys("Email sent by selenium");
     }
 
-    @And("^I attach an image$")
-    public void attachImage() throws Exception {
+    @And("I attach an image with name (.*)")
+    public void attachImage(String imageName) throws Exception {
         WebElement attachFileElement = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//div[@command='Files' and @aria-label='Attach files']")));
         attachFileElement.click();
+
+        String cmd = "Images/AttachFile.exe Images/" + imageName;
+
+        Runtime.getRuntime().exec(cmd);
         Thread.sleep(5000);
     }
 
-    @And("^I click the submit button$")
-    public void sendEmail() {
+    @And("^I click the send button$")
+    public void sendEmail() throws Exception{
         WebElement sendButton = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//div[@role='button' and @aria-label='Send \u202A(Ctrl-Enter)\u202C']")));
         sendButton.click();
+        Thread.sleep(5000);
+    }
+
+    @Then("The email should be sent successfully")
+    public void closeChrome() {
+        chrome.close();
+        chrome = null;
     }
 
     private void setupSeleniumDriver() {

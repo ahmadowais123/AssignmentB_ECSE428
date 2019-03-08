@@ -19,6 +19,7 @@ public class Steps {
 
     public static WebDriver chrome;
     public static WebDriverWait wait;
+    public static WebDriverWait waitUpload;
     public static final String CHROME_DRIVER_PATH = "Driver/chromedriver.exe";
 
     @Given("^I have a gmail account$")
@@ -26,7 +27,7 @@ public class Steps {
         setupSeleniumDriver();
     }
 
-    @When("I login with username {string} and password {string}")
+    @When("I login with username (.*) and password (.*)")
     public void gmailLoginUsernamePassword(String username, String password) {
 
         chrome.get("https://mail.google.com");
@@ -70,10 +71,33 @@ public class Steps {
         wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//input[@name='attach' and @type='hidden']")));
     }
 
+    @And("I attach a large image with name (.*)")
+    public void attachLargeImage(String imageName) throws IOException {
+        WebElement attachFileElement = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//div[@command='Files' and @aria-label='Attach files']")));
+        attachFileElement.click();
+
+        String cmd = "Images/AttachFile.exe Images/" + imageName;
+
+        Runtime.getRuntime().exec(cmd);
+
+        WebElement googleDriveLink = waitUpload.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//a[@aria-label='InvalidImage.jpg']")));
+        String href = googleDriveLink.getAttribute("href");
+        System.out.println(href);
+    }
+
     @And("^I click the send button$")
     public void sendEmail() {
         WebElement sendButton = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//div[@role='button' and @aria-label='Send \u202A(Ctrl-Enter)\u202C']")));
         sendButton.click();
+    }
+
+    @And("I allow share access to the google drive link")
+    public void giveAccess() throws Exception{
+        chrome.switchTo().frame(13);
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.tagName("span")));
+        WebElement accessLink = chrome.findElements(By.tagName("span")).get(2);
+        accessLink.click();
+        chrome.switchTo().defaultContent();
     }
 
     @Then("The email should be sent successfully")
@@ -108,7 +132,8 @@ public class Steps {
             System.out.println("Setting up chrome driver");
             System.setProperty("webdriver.chrome.driver", CHROME_DRIVER_PATH);
             chrome = new ChromeDriver();
-            wait = new WebDriverWait(chrome, 30);
+            wait = new WebDriverWait(chrome, 15);
+            waitUpload = new WebDriverWait(chrome, 100);
         }
     }
 }

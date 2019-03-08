@@ -36,6 +36,10 @@ public class Steps {
         emailElement.sendKeys(username);
         chrome.findElement(By.id("identifierNext")).click();
         WebElement passwordElement = wait.until(ExpectedConditions.presenceOfElementLocated(By.name("password")));
+        String label = passwordElement.getAttribute("aria-label");
+        if(!label.equals("Enter your password")) {
+            fail("Could not find password box");
+        }
         passwordElement.sendKeys(password);
         chrome.findElement(By.id("passwordNext")).click();
 
@@ -84,9 +88,13 @@ public class Steps {
         }
     }
 
-    @And("^I send the email$")
+    @And("I send the email")
     public void sendEmail() {
         WebElement sendButton = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//div[@role='button' and @aria-label='Send \u202A(Ctrl-Enter)\u202C']")));
+        String role = sendButton.getAttribute("role");
+        if(!role.equals("button")) {
+            fail("Send button not clickable");
+        }
         sendButton.click();
     }
 

@@ -8,8 +8,6 @@ The goal of this project is to automate acceptance testing of a story related to
 
 **Selenium** is used to control the application.
 
-**AutoIt** is used to attach an image to the email body. Inorder for the tests to run properly AutoIt needs to be installed on the machine being used to run the tests. To download the software click [here](https://www.autoitscript.com/site/autoit/downloads/).
-
 The project has been setup using **Gradle**.
 
 ## Instructions to Run

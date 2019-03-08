@@ -41,14 +41,11 @@ public class Steps {
 
     }
 
-    @And("I click on the compose button")
-    public void clickComposeButton() {
+    @And("I want to send an email to (.*) with subject (.*)")
+    public void setEmailAddressAndSubject(String emailAddress, String subject) {
         WebElement composeButton = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//*[@role='button' and text()='Compose']")));
         composeButton.click();
-    }
 
-    @And("I send the email to (.*) with subject (.*)")
-    public void setEmailAddressAndSubject(String emailAddress, String subject) {
         WebElement recipientAddressElement = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//textarea[@name='to' and @aria-label='To']")));
         recipientAddressElement.sendKeys(emailAddress);
 
@@ -87,7 +84,7 @@ public class Steps {
         }
     }
 
-    @And("I click the send button")
+    @And("^I send the email$")
     public void sendEmail() {
         WebElement sendButton = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//div[@role='button' and @aria-label='Send \u202A(Ctrl-Enter)\u202C']")));
         sendButton.click();
@@ -102,7 +99,7 @@ public class Steps {
         chrome.switchTo().defaultContent();
     }
 
-    @Then("The email should be sent successfully")
+    @Then("The email with the attachment should be sent successfully")
     public void closeChrome() {
         if(checkIfEmailSent()) {
             logout();

@@ -22,7 +22,7 @@ public class Steps {
     public static final String CHROME_DRIVER_PATH = "Driver/chromedriver.exe";
 
     @Given("^I have a gmail account$")
-    public void setupSeleniumDriverForTests() throws Exception {
+    public void setupSeleniumDriverForTests() {
         setupSeleniumDriver();
     }
 
@@ -77,9 +77,10 @@ public class Steps {
     }
 
     @Then("The email should be sent successfully")
-    public void closeChrome() throws Exception {
+    public void closeChrome() {
         if(checkIfEmailSent()) {
             logout();
+            chrome.manage().deleteAllCookies();
         } else {
             fail("Email was not sent successfully");
         }

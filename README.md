@@ -8,17 +8,17 @@ The goal of this project is to automate acceptance testing of a story related to
 
 **Selenium** is used to control the application.
 
-**AutoIt** is used to attach an image to the email body. Inorder for the tests to run properly AutoIt needs to be installed on the machine being used to run the tests. To download the software click [here](https://www.autoitscript.com/site/autoit/downloads/).
-
 The project has been setup using **Gradle**.
 
 ## Instructions to Run
+This project is only compatible for Windows Operating Systems.
+
 Before running the gradle wrapper command ensure that your PATH environment variable has the jdk path in it. For instructions on how to do this click [here](https://www.java.com/en/download/help/path.xml).
 
 Also ensure that the environment variable JAVA_HOME is set. For instructions on how to do this click [here](https://docs.oracle.com/cd/E19182-01/820-7851/inst_cli_jdk_javahome_t/).
 
-For windows users
+From CMD:
 1) Run "gradlew.bat cucumber"
 
-For linux/MAC users
+From git bash like shells:
 1) Run "./gradlew cucumber"

@@ -11,18 +11,23 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.io.IOException;
+
+import static org.junit.Assert.fail;
+
 public class Steps {
 
     public static WebDriver chrome;
     public static WebDriverWait wait;
+    public static WebDriverWait waitUpload;
     public static final String CHROME_DRIVER_PATH = "Driver/chromedriver.exe";
 
-    @Given("^I have a gmail account$")
-    public void setupSeleniumDriverForTests() throws Exception {
+    @Given("I have a gmail account")
+    public void setupSeleniumDriverForTests() {
         setupSeleniumDriver();
     }
 
-    @When("I am logged in as {string} with password {string}")
+    @When("I login with username (.*) and password (.*)")
     public void gmailLoginUsernamePassword(String username, String password) {
 
         chrome.get("https://mail.google.com");
@@ -31,6 +36,10 @@ public class Steps {
         emailElement.sendKeys(username);
         chrome.findElement(By.id("identifierNext")).click();
         WebElement passwordElement = wait.until(ExpectedConditions.presenceOfElementLocated(By.name("password")));
+        String label = passwordElement.getAttribute("aria-label");
+        if(!label.equals("Enter your password")) {
+            fail("Could not find password box");
+        }
         passwordElement.sendKeys(password);
         chrome.findElement(By.id("passwordNext")).click();
 
@@ -52,27 +61,99 @@ public class Steps {
     }
 
     @And("I attach an image with name (.*)")
-    public void attachImage(String imageName) throws Exception {
+    public void attachImage(String imageName) throws IOException {
         WebElement attachFileElement = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//div[@command='Files' and @aria-label='Attach files']")));
         attachFileElement.click();
 
         String cmd = "Images/AttachFile.exe Images/" + imageName;
 
         Runtime.getRuntime().exec(cmd);
-        Thread.sleep(5000);
+
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//input[@name='attach' and @type='hidden']")));
     }
 
-    @And("^I send the email$")
-    public void sendEmail() throws Exception{
+    @And("I attach a large image with name (.*)")
+    public void attachLargeImage(String imageName) throws IOException {
+        WebElement attachFileElement = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//div[@command='Files' and @aria-label='Attach files']")));
+        attachFileElement.click();
+
+        String cmd = "Images/AttachFile.exe Images/" + imageName;
+
+        Runtime.getRuntime().exec(cmd);
+
+        WebElement googleDriveLink = waitUpload.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//a[@aria-label='InvalidImage.jpg']")));
+        String href = googleDriveLink.getAttribute("href");
+        if(!href.startsWith("https://drive.google.com")) {
+            fail("Attachment link is not a google drive link");
+        }
+    }
+
+    @And("I send the email")
+    public void sendEmail() {
         WebElement sendButton = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//div[@role='button' and @aria-label='Send \u202A(Ctrl-Enter)\u202C']")));
+        String role = sendButton.getAttribute("role");
+        if(!role.equals("button")) {
+            fail("Send button not clickable");
+        }
         sendButton.click();
-        Thread.sleep(5000);
+    }
+
+    @And("I allow share access to the google drive link")
+    public void giveAccess() {
+        chrome.switchTo().frame(13);
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.tagName("span")));
+        WebElement accessLink = chrome.findElements(By.tagName("span")).get(2);
+        accessLink.click();
+        chrome.switchTo().defaultContent();
     }
 
     @Then("The email with the attachment should be sent successfully")
     public void closeChrome() {
+        if(checkIfEmailSent()) {
+            logout();
+            chrome.manage().deleteAllCookies();
+        } else {
+            fail("Email was not sent successfully");
+        }
+    }
+
+    @Then("I should see an error and the mail will not be sent")
+    public void checkError() {
+        String comparison = "The address \"abcdef\" in the \"To\" field was not recognised. Please make sure that all addresses are properly formed.";
+
+        WebElement errorDiv = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//div[@role='alertdialog']")));
+        WebElement okButton = errorDiv.findElement(By.xpath("//button[@name='ok']"));
+        okButton.click();
+        WebElement errorHeading = errorDiv.findElement(By.xpath("//span[@role='heading' and text()='Error']"));
+        WebElement errorMessage = errorDiv.findElements(By.tagName("div")).get(1);
+
+        if(!errorHeading.getText().equals("Error")) {
+            fail("Error was not seen");
+        }
+
+        if(!errorMessage.getText().equals(comparison)) {
+            fail("Error was not seen");
+        }
+
         chrome.close();
-        chrome = null;
+
+    }
+
+    private void logout() {
+        WebElement accountLabel = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//a[@aria-label='Google Account: Selenium Test  \n" +
+                "(selenium662@gmail.com)']")));
+        accountLabel.click();
+        WebElement signoutButton = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//a[text()='Sign out']")));
+        signoutButton.click();
+    }
+
+    private boolean checkIfEmailSent() {
+        try {
+            wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//span[@class='bAq' and text()='Message sent.']")));
+        } catch(Exception e) {
+            return false;
+        }
+        return true;
     }
 
     private void setupSeleniumDriver() {
@@ -80,7 +161,8 @@ public class Steps {
             System.out.println("Setting up chrome driver");
             System.setProperty("webdriver.chrome.driver", CHROME_DRIVER_PATH);
             chrome = new ChromeDriver();
-            wait = new WebDriverWait(chrome, 30);
+            wait = new WebDriverWait(chrome, 15);
+            waitUpload = new WebDriverWait(chrome, 100);
         }
     }
 }

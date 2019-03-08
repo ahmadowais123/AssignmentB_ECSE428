@@ -11,6 +11,10 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.io.IOException;
+
+import static org.junit.Assert.fail;
+
 public class Steps {
 
     public static WebDriver chrome;
@@ -55,27 +59,47 @@ public class Steps {
     }
 
     @And("I attach an image with name (.*)")
-    public void attachImage(String imageName) throws Exception {
+    public void attachImage(String imageName) throws IOException {
         WebElement attachFileElement = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//div[@command='Files' and @aria-label='Attach files']")));
         attachFileElement.click();
 
         String cmd = "Images/AttachFile.exe Images/" + imageName;
 
         Runtime.getRuntime().exec(cmd);
-        Thread.sleep(5000);
+
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//input[@name='attach' and @type='hidden']")));
     }
 
     @And("^I click the send button$")
-    public void sendEmail() throws Exception{
+    public void sendEmail() {
         WebElement sendButton = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//div[@role='button' and @aria-label='Send \u202A(Ctrl-Enter)\u202C']")));
         sendButton.click();
-        Thread.sleep(5000);
     }
 
     @Then("The email should be sent successfully")
-    public void closeChrome() {
-        chrome.close();
-        chrome = null;
+    public void closeChrome() throws Exception {
+        if(checkIfEmailSent()) {
+            logout();
+        } else {
+            fail("Email was not sent successfully");
+        }
+    }
+
+    private void logout() {
+        WebElement accountLabel = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//a[@aria-label='Google Account: Selenium Test  \n" +
+                "(selenium662@gmail.com)']")));
+        accountLabel.click();
+        WebElement signoutButton = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//a[text()='Sign out']")));
+        signoutButton.click();
+    }
+
+    private boolean checkIfEmailSent() {
+        try {
+            wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//span[@class='bAq' and text()='Message sent.']")));
+        } catch(Exception e) {
+            return false;
+        }
+        return true;
     }
 
     private void setupSeleniumDriver() {

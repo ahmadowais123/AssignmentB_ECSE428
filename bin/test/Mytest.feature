@@ -1,9 +1,9 @@
-Feature: Reset functionality on login page of Application
+Feature: Sending an email with an image attachment
 
   #Normal Scenario
   Scenario Outline: Send an email with image attachment
 
-    Given I have a gmail account
+    Given I have a Gmail account
     When I login with username selenium662 and password test_user1
     And I want to send an email to <to> with subject <subject>
     And I attach an image with name <image>
@@ -19,24 +19,26 @@ Feature: Reset functionality on login page of Application
     | itsirfannawaz@gmail.com      | Test Subject 4   | McLaren.jpg     |
     | gokuiskakarotalso@gmail.com  | Test Subject 5   | Zonda.jpg       |
 
+  #Alternate Scenario
   Scenario Outline: Send an email with an image of large size
 
-    Given I have a gmail account
+    Given I have a Gmail account
     When I login with username selenium662 and password test_user1
     And I want to send an email to <to> with subject <subject>
     And I attach a large image with name <image>
     And I send the email
-    And I allow share access to the google drive link
-    Then The email with the attachment should be sent successfully
+    And I allow share access to the Google Drive link
+    Then the email with the attachment should be sent successfully
 
     Examples:
 
     |             to               |         subject		  | 	   image          |
     | itsabdullahirfan@gmail.com   | Large Image Attachment   |   InvalidImage.jpg    |
 
+  #Error Scenario
   Scenario Outline: Send an email with an invalid recipient address
 
-    Given I have a gmail account
+    Given I have a Gmail account
     When I login with username selenium662 and password test_user1
     And I want to send an email to <to> with subject <subject>
     And I attach an image with name <image>

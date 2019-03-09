@@ -28,7 +28,7 @@ public class Steps {
      * Sets up the Chrome and wait drivers.
      * Used for all three scenarios
      */
-    @Given("I have a gmail account")
+    @Given("I have a Gmail account")
     public void setupSeleniumDriverForTests() {
         setupSeleniumDrivers();
     }
@@ -173,7 +173,7 @@ public class Steps {
      * 
      * Used in the Alternate scenario
      */
-    @And("I allow share access to the google drive link")
+    @And("I allow share access to the Google Drive link")
     public void giveAccess() {
         chrome.switchTo().frame(13);
         wait.until(ExpectedConditions.presenceOfElementLocated(By.tagName("span")));
@@ -186,7 +186,7 @@ public class Steps {
      * Logs out of the Gmail account
      * Used in the Normal and Alternate scenarios
      */
-    @Then("The email with the attachment should be sent successfully")
+    @Then("the email with the attachment should be sent successfully")
     public void closeChrome() {
     	
     	//logs out of the email was sent successfully

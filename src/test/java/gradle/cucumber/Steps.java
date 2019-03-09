@@ -118,7 +118,6 @@ public class Steps {
     	//attaches a file to the email draft
     	attachFile(imageName);
 
-        //TODO
         wait.until(ExpectedConditions.presenceOfElementLocated(
         		By.xpath("//input[@name='attach' and @type='hidden']")));
     
@@ -167,11 +166,11 @@ public class Steps {
         sendButton.click();
     }
 
-    
-    //TODO
+
     /**
-     * 
-     * Used in the Alternate scenario
+     * This method clicks on the button to give share access to the recipient
+     * of the google drive link.
+     * Only used in the Alternate scenario
      */
     @And("I allow share access to the Google Drive link")
     public void giveAccess() {
@@ -186,7 +185,7 @@ public class Steps {
      * Logs out of the Gmail account
      * Used in the Normal and Alternate scenarios
      */
-    @Then("the email with the attachment should be sent successfully")
+    @Then("The email with the attachment should be sent successfully")
     public void closeChrome() {
     	
     	//logs out of the email was sent successfully

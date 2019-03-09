@@ -28,7 +28,7 @@ Feature: Sending an email with an image attachment
     And I attach a large image with name <image>
     And I send the email
     And I allow share access to the Google Drive link
-    Then the email with the attachment should be sent successfully
+    Then The email with the attachment should be sent successfully
 
     Examples:
 
